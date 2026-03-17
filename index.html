@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Cloud Course | XpertChamps</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FF9900; /* AWS Orange */
+            --secondary-color: #232F3E; /* AWS Squid Ink */
+            --accent-blue: #0073BB;
+            --accent-green: #28A745;
+            --gradient-bg: linear-gradient(135deg, #84FAB0 0%, #8FD3F4 50%, #A6C1EE 100%);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-dark: #2D3748;
+            --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.1);
+            --shadow-3d: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        html, body {
+            height: 100%; /* Ensure full height for sticky footer */
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--gradient-bg);
+            color: var(--text-dark);
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-y: auto; /* Allow vertical scroll */
+            
+            /* Flex properties for Sticky Footer */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Wrapper to push footer down */
+        .content-wrapper {
+            flex: 1 0 auto; /* Grows to fill space */
+            width: 100%;
+            position: relative;
+        }
+
+        /* Animated Background Shapes */
+        .bg-shape {
+            position: fixed; /* Changed to fixed so it doesn't push footer */
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: -1;
+            animation: float 15s infinite ease-in-out;
+        }
+        .shape-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: rgba(255, 153, 0, 0.4); }
+        .shape-2 { bottom: -10%; right: -10%; width: 600px; height: 600px; background: rgba(0, 115, 187, 0.3); }
+        .shape-3 { top: 40%; left: 50%; width: 300px; height: 300px; background: rgba(104, 236, 179, 0.4); }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
+        /* Header / Navbar */
+        .dashboard-nav {
+            padding: 20px 0;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .logo-container { display: flex; align-items: center; gap: 15px; }
+        .logo-img { width: 50px; height: 50px; object-fit: contain; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .brand-text { display: flex; flex-direction: column; }
+        .brand-name { font-size: 1.5rem; font-weight: 800; line-height: 1.2; color: var(--secondary-color); }
+        .brand-sub { font-size: 0.8rem; color: var(--primary-color); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+
+        .nav-cta {
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(255, 153, 0, 0.3);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-cta:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(255, 153, 0, 0.4); color: white; }
+
+        /* Hero Section */
+        .hero-section { padding: 80px 0 40px; position: relative; }
+        .hero-content { position: relative; z-index: 2; }
+
+        .badge-top {
+            background: var(--secondary-color);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(35, 47, 62, 0.2);
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--secondary-color);
+            line-height: 1.2;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0px rgba(255,255,255,0.5);
+        }
+        .main-title span { color: var(--primary-color); position: relative; display: inline-block; }
+
+        .subtitle { font-size: 1.2rem; color: #4A5568; margin-bottom: 40px; max-width: 600px; font-weight: 500; }
+
+        /* Feature Card Left Side */
+        .feature-card-main {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow-3d);
+            border-left: 5px solid var(--primary-color);
+            margin-top: 30px;
+            transition: 0.3s;
+        }
+        .feature-card-main:hover { transform: translateY(-5px); }
+
+        .feature-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .feature-icon-box {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #e0e5ec 0%, #f6f7f9 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            box-shadow: 6px 6px 12px #d1d9e6, -6px -6px 12px #ffffff;
+        }
+
+        /* 3D Price Card */
+        .price-card-3d {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: var(--shadow-3d);
+            transform: perspective(1000px) rotateY(-10deg) rotateX(5deg);
+            transition: transform 0.5s ease;
+            border: 4px solid rgba(255,255,255,0.8);
+            position: relative;
+            overflow: hidden;
+        }
+        .price-card-3d::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,153,0,0.1) 0%, transparent 60%);
+            transform: rotate(30deg);
+        }
+        .price-card-3d:hover { transform: perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1.02); }
+
+        .price-label { font-size: 1rem; text-transform: uppercase; letter-spacing: 2px; color: #718096; font-weight: 700; }
+        .price-amount { font-size: 4.5rem; font-weight: 800; color: var(--accent-green); line-height: 1; margin: 10px 0; text-shadow: 3px 3px 0px rgba(0,0,0,0.1); }
+        .price-duration { font-size: 1.1rem; color: var(--secondary-color); font-weight: 600; background: #F3F4F6; display: inline-block; padding: 5px 15px; border-radius: 20px; }
+
+        .btn-main-cta {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 10px 25px rgba(255, 153, 0, 0.3);
+            transition: 0.3s;
+            width: 100%;
+            border: none;
+        }
+        .btn-main-cta:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(255, 153, 0, 0.4); color: white; }
+
+        .btn-whatsapp { background: #25D366; margin-top: 15px; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3); }
+        .btn-whatsapp:hover { box-shadow: 0 15px 35px rgba(37, 211, 102, 0.4); }
+
+        /* Syllabus Grid */
+        .modules-section { padding: 60px 0; }
+        .section-header { text-align: center; margin-bottom: 50px; }
+        .section-title { font-size: 2.5rem; font-weight: 800; color: var(--secondary-color); margin-bottom: 10px; }
+        
+        .module-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+
+        .module-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+        }
+        .module-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: var(--shadow-3d); border-color: rgba(255,255,255,0.8); }
+
+        .module-head { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed rgba(0,0,0,0.1); }
+        .module-icon {
+            width: 50px; height: 50px;
+            background: var(--secondary-color);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: white;
+            box-shadow: 0 8px 16px rgba(35, 47, 62, 0.2);
+        }
+        .module-title { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); }
+        .module-days { font-size: 0.8rem; background: #E2E8F0; color: #4A5568; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+
+        .topic-list { list-style: none; padding: 0; margin: 0; }
+        .topic-item { position: relative; padding-left: 20px; margin-bottom: 8px; font-size: 0.95rem; color: #4A5568; font-weight: 500; }
+        .topic-item::before { content: '•'; color: var(--primary-color); font-weight: bold; position: absolute; left: 0; }
+
+        /* Colorful Accents for Cards */
+        .card-orange .module-icon { background: linear-gradient(135deg, #FF9900, #FF6B00); }
+        .card-blue .module-icon { background: linear-gradient(135deg, #0073BB, #00A0D2); }
+        .card-green .module-icon { background: linear-gradient(135deg, #28A745, #20C997); }
+        .card-purple .module-icon { background: linear-gradient(135deg, #6F42C1, #9F7AEA); }
+        .card-red .module-icon { background: linear-gradient(135deg, #DC3545, #F87171); }
+
+        /* 3D Project Section */
+        .projects-section { padding: 60px 0; }
+
+        .projects-container {
+            background: white;
+            border-radius: 30px;
+            padding: 50px 30px;
+            box-shadow: var(--shadow-3d);
+            position: relative;
+            overflow: hidden;
+        }
+        .projects-container::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,153,0,0.05) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .project-3d-card {
+            background: linear-gradient(145deg, #ffffff, #f0f0f3);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 10px 10px 20px #d1d9e6, -10px -10px 20px #ffffff; /* Neumorphism Shadow */
+            transition: 0.4s;
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .project-3d-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 15px 15px 30px #c4ccd6, -15px -15px 30px #ffffff;
+        }
+
+        .project-icon-3d {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #3a4a5e 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 10px 20px rgba(35, 47, 62, 0.3);
+            position: relative;
+        }
+        /* Shine effect on icon */
+        .project-icon-3d::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 15px;
+            width: 20px;
+            height: 10px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 50%;
+            transform: rotate(-30deg);
+        }
+
+        /* FIX: Footer Styling - No extra space */
+        .footer-clean {
+            background: var(--secondary-color);
+            color: white;
+            padding: 50px 0 30px;
+            width: 100%;
+            flex-shrink: 0; /* Prevents shrinking */
+            margin-top: auto; /* Pushes to bottom */
+            position: relative;
+            z-index: 10;
+        }
+        .footer-logo {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 15px;
+            padding: 5px;
+        }
+        .footer-btn {
+            display: inline-block;
+            padding: 10px 30px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .footer-btn:hover { background: white; color: var(--secondary-color); }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
+            z-index: 999;
+            animation: bounce 2s infinite;
+            text-decoration: none;
+        }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+    </style>
+</head>
+<body>
+
+    <!-- Animated Background (Fixed so it doesn't affect scroll height) -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+    <div class="bg-shape shape-3"></div>
+
+    <!-- Content Wrapper for Sticky Footer -->
+    <div class="content-wrapper">
+
+        <!-- Navigation -->
+        <nav class="dashboard-nav">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="logo-container">
+                        <img src="logo.png" alt="XpertChamps Logo" class="logo-img">
+                        <div class="brand-text">
+                            <span class="brand-name">XpertChamps</span>
+                            <span class="brand-sub">Pvt Ltd</span>
+                        </div>
+                    </div>
+                    <div class="d-none d-md-block">
+                        <a href="https://forms.gle/Rch4wS6RLqByXBj3A" target="_blank" class="nav-cta">
+                            <i class="fas fa-rocket"></i> Enroll Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-7 hero-content">
+                        <span class="badge-top">☁️ 45 Days Cloud Mastery</span>
+                        <h1 class="main-title">AWS Cloud Computing <span>Course</span></h1>
+                        <p class="subtitle">Dive deep into the cloud with hands-on projects. From EC2 to Serverless, master the skills that get you hired. Designed for beginners & professionals.</p>
+                        
+                        <!-- Feature Card -->
+                        <div class="feature-card-main">
+                            <h5 class="mb-3 fw-bold" style="color: var(--secondary-color);"><i class="fas fa-star text-warning me-2"></i>What You Get</h5>
+                            
+                            <div class="feature-item">
+                                <div class="feature-icon-box"><i class="fas fa-video"></i></div>
+                                <div class="text-start">
+                                    <div class="fw-bold">Live + Recorded Classes</div>
+                                    <small class="text-muted">Access high-quality video lectures anytime.</small>
+                                </div>
+                            </div>
+
+                            <div class="feature-item">
+                                <div class="feature-icon-box"><i class="fas fa-certificate"></i></div>
+                                <div class="text-start">
+                                    <div class="fw-bold">Certified Course</div>
+                                    <small class="text-muted"><strong>ISO, MSME & AICTE Approved</strong> Certificate.</small>
+                                </div>
+                            </div>
+
+                            <div class="feature-item">
+                                <div class="feature-icon-box"><i class="fas fa-project-diagram"></i></div>
+                                <div class="text-start">
+                                    <div class="fw-bold">Real-Time Projects</div>
+                                    <small class="text-muted">4 Industry-level projects included.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-5 mt-5 mt-lg-0">
+                        <div class="price-card-3d">
+                            <div class="price-label">Special Launch Offer</div>
+                            <div class="price-amount">₹199</div>
+                            <div class="price-duration"><i class="far fa-clock"></i> 45 Days Full Access</div>
+                            <div class="mt-4">
+                                <a href="https://forms.gle/Rch4wS6RLqByXBj3A" target="_blank" class="btn-main-cta">
+                                    <i class="fas fa-user-plus me-2"></i>Register Now
+                                </a>
+                                
+                                <a href="https://wa.me/919492321556" target="_blank" class="btn-main-cta btn-whatsapp">
+                                    <i class="fab fa-whatsapp me-2"></i>WhatsApp Us
+                                </a>
+                            </div>
+                            <p class="mt-4 small text-muted mb-0"><i class="fas fa-check-circle text-success me-1"></i> 100% Satisfaction Guaranteed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Syllabus Section -->
+        <section class="modules-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">📚 Complete Course Syllabus</h2>
+                    <p class="text-muted">Step-by-step curriculum to make you an AWS Expert</p>
+                </div>
+
+                <div class="module-grid">
+                    <!-- Module 1 -->
+                    <div class="module-card card-blue">
+                        <div class="module-head">
+                            <div class="module-icon"><i class="fas fa-cloud"></i></div>
+                            <div>
+                                <div class="module-title">📌Cloud Fundamentals</div>
+                                <span class="module-days">Days 1–3</span>
+                            </div>
+                        </div>
+                        <ul class="topic-list">
+                            <li class="topic-item">What is Cloud Computing</li>
+                            <li class="topic-item">Types of Cloud (Public, Private, Hybrid)</li>
+                            <li class="topic-item">Service Models (IaaS, PaaS, SaaS)</li>
+                            <li class="topic-item">Real-time examples of cloud usage</li>
+                        </ul>
+                    </div>
+
+                    <!-- Module 2 -->
+                    <div class="module-card card-green">
+                        <div class="module-head">
+                            <div class="module-icon"><i class="fab fa-aws"></i></div>
+                            <div>
+                                <div class="module-title">📌AWS Setup</div>
+                                <span class="module-days">Days 4–5</span>
+                            </div>
+                        </div>
+                        <ul class="topic-list">
+                            <li class="topic-item">AWS Overview</li>
+                            <li class="topic-item">Creating AWS Free Tier Account</li>
+                            <li class="topic-item">Console Navigation</li>
+                            <li class="topic-item">Billing Dashboard</li>
+                        </ul>
+                    </div>
+
+                    <!-- Module 3 -->
+                    <div class="module-card card-red">
+                        <div class="module-head">
+                            <div class="module-icon"><i class="fas fa-user-shield"></i></div>
+                            <div>
+                                <div class="module-title">📌IAM (Security)</div>
+                                <span class="module-days">Days 6–8</span>
+                            </div>
+                        </div>
+                        <ul class="topic-list">
+                            <li class="topic-item">IAM Users & Groups</li>
+                            <li class="topic-item">Roles & Permissions</li>
+                            <li class="topic-item">Policies & MFA Setup</li>
+                            <li class="topic-item">Best Practices</li>
+                        </ul>
+                    </div>
+
+                    <!-- Module 4 -->
+                    <div class="module-card card-orange">
+                        <div class="module-head">
+                            <div class="module-icon"><i class="fas fa-server"></i></div>
+                            <div>
+                                <div class="module-title">📌EC2</div>
+                                <span class="module-days">Days 9–14</span>
+                            </div>
+                        </div>
+                        <ul class="topic-list">
+                            <li class="topic-item">Launch EC2 (t2.micro)</li>
+                            <li class="topic-item">Key Pair & Security Groups</li>
+                            <li class="topic-item">Connect via SSH</li>
+                            <li class="topic-item">Host a simple website</li>
+                        </ul>
+                    </div>
+
+                    <!-- Module 5 -->
+                    <div class="module-card card-green">
+                        <div class="module-head">
+                            <div class="module-icon"><i class="fas fa-database"></i></div>
+                            <div>
+                                <div class="module-title">📌S3 Storage</div>
+                                <span class="module-days">Days 15–18</span>
+                            </div>
+                        </div>
+                        <ul class="topic-list">
+                            <li class="topic-item">Create Buckets</li>
+                            <li class="topic-item">Static Website Hosting</li>
+                            <li class="topic-item">Versioning & Permissions</li>
+                        </ul>
+                    </div>
+
+                    <!-- Module 6 -->
+                    <div class="module-card card-purple">
+                        <div class="module-head">
+                            <div class="module-icon"><i class="fas fa-network-wired"></i></div>
+                            <div>
+                                <div class="module-title">📌VPC Networking</div>
+                                <span class="module-days">Days 19–22</span>
+                            </div>
+                        </div>
+                        <ul class="topic-list">
+                            <li class="topic-item">What is VPC</li>
+                            <li class="topic-item">Subnets (Public/Private)</li>
+                            <li class="topic-item">Internet Gateway</li>
+                            <li class="topic-item">Route Tables</li>
+                        </ul>
+                    </div>
+
+                    <!-- Module 7 -->
+                    <div class="module-card card-blue">
+                        <div class="module-head">
+                            <div class="module-icon"><i class="fas fa-table"></i></div>
+                            <div>
+                                <div class="module-title">📌RDS (Database)</div>
+                                <span class="module-days">Days 23–26</span>
+                            </div>
+                        </div>
+                        <ul class="topic-list">
+                            <li class="topic-item">Launch MySQL DB (Free Tier)</li>
+                            <li class="topic-item">Connect EC2 to RDS</li>
+                            <li class="topic-item">Basic Queries</li>
+                        </ul>
+                    </div>
+
+                    <!-- Module 8 -->
+                    <div class="module-card card-red">
+                        <div class="module-head">
+                            <div class="module-icon"><i class="fas fa-bolt"></i></div>
+                            <div>
+                                <div class="module-title">📌DynamoDB</div>
+                                <span class="module-days">Days 27–29</span>
+                            </div>
+                        </div>
+                        <ul class="topic-list">
+                            <li class="topic-item">NoSQL Basics</li>
+                            <li class="topic-item">Create Tables</li>
+                            <li class="topic-item">Insert & Retrieve Data</li>
+                        </ul>
+                    </div>
+
+                    <!-- Module 9 -->
+                    <div class="module-card card-purple">
+                        <div class="module-head">
+                            <div class="module-icon"><i class="fas fa-chart-line"></i></div>
+                            <div>
+                                <div class="module-title">📌Monitoring</div>
+                                <span class="module-days">Days 30–32</span>
+                            </div>
+                        </div>
+                        <ul class="topic-list">
+                            <li class="topic-item">AWS CloudWatch Basics</li>
+                            <li class="topic-item">Monitor EC2</li>
+                            <li class="topic-item">Logs</li>
+                        </ul>
+                    </div>
+
+                    <!-- Module 10 -->
+                    <div class="module-card card-orange">
+                        <div class="module-head">
+                            <div class="module-icon"><i class="fas fa-code"></i></div>
+                            <div>
+                                <div class="module-title">📌Serverless</div>
+                                <span class="module-days">Days 33–35</span>
+                            </div>
+                        </div>
+                        <ul class="topic-list">
+                            <li class="topic-item">AWS Lambda</li>
+                            <li class="topic-item">Simple Functions</li>
+                            <li class="topic-item">Event Trigger</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Module 11 -->
+                    <div class="module-card card-green">
+                        <div class="module-head">
+                            <div class="module-icon"><i class="fas fa-rocket"></i></div>
+                            <div>
+                                <div class="module-title">📌Deployment</div>
+                                <span class="module-days">Days 36–40</span>
+                            </div>
+                        </div>
+                        <ul class="topic-list">
+                            <li class="topic-item">Host Website on S3</li>
+                            <li class="topic-item">EC2 Website Deployment</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section class="projects-section">
+            <div class="container">
+                <div class="projects-container">
+                    <div class="text-center mb-5">
+                        <h2 class="section-title" style="margin-bottom: 10px;">🔥 Real-Time Projects</h2>
+                        <p class="lead text-muted">Module 12 (Days 41–45) - Hands-on Industry Experience</p>
+                    </div>
+
+                    <div class="row g-4">
+                        <!-- Project 1 -->
+                        <div class="col-md-6 col-lg-3">
+                            <div class="project-3d-card">
+                                <div class="project-icon-3d">
+                                    <i class="fas fa-globe"></i>
+                                </div>
+                                <h5 class="fw-bold mt-2">Project 1</h5>
+                                <p class="text-muted small mb-0">Deploy Static Website using S3</p>
+                            </div>
+                        </div>
+
+                        <!-- Project 2 -->
+                        <div class="col-md-6 col-lg-3">
+                            <div class="project-3d-card">
+                                <div class="project-icon-3d" style="background: linear-gradient(135deg, #FF9900 0%, #FF6600 100%);">
+                                    <i class="fas fa-laptop-code"></i>
+                                </div>
+                                <h5 class="fw-bold mt-2">Project 2</h5>
+                                <p class="text-muted small mb-0">Host Dynamic Website using EC2</p>
+                            </div>
+                        </div>
+
+                        <!-- Project 3 -->
+                        <div class="col-md-6 col-lg-3">
+                            <div class="project-3d-card">
+                                <div class="project-icon-3d" style="background: linear-gradient(135deg, #0073BB 0%, #00A0D2 100%);">
+                                    <i class="fas fa-layer-group"></i>
+                                </div>
+                                <h5 class="fw-bold mt-2">Project 3</h5>
+                                <p class="text-muted small mb-0">EC2 + RDS Integration (Mini App)</p>
+                            </div>
+                        </div>
+
+                        <!-- Project 4 -->
+                        <div class="col-md-6 col-lg-3">
+                            <div class="project-3d-card">
+                                <div class="project-icon-3d" style="background: linear-gradient(135deg, #28A745 0%, #20C997 100%);">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <h5 class="fw-bold mt-2">Project 4</h5>
+                                <p class="text-muted small mb-0">Serverless App using Lambda</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-5">
+                        <a href="https://forms.gle/Rch4wS6RLqByXBj3A" target="_blank" class="btn-main-cta" style="width: auto; padding: 15px 50px;">
+                            Start Building Today <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+    <!-- End Content Wrapper -->
+
+    <!-- Footer -->
+    <footer class="footer-clean">
+        <div class="container text-center">
+            <img src="logo.png" alt="Logo" class="footer-logo mb-3">
+            <h4 class="mb-3">XpertChamps Pvt Ltd</h4>
+            <p class="text-white-50 mb-4">Empowering Future Cloud Experts with Industry-Ready Skills.</p>
+            
+            <div class="d-flex justify-content-center gap-3 mb-4">
+                <a href="https://forms.gle/Rch4wS6RLqByXBj3A" target="_blank" class="footer-btn">
+                    <i class="fas fa-graduation-cap me-2"></i>Enroll Now
+                </a>
+            </div>
+            
+            <div class="text-white-50 small">
+                © 2024 XpertChamps Pvt Ltd. All Rights Reserved.<br>
+                ISO Certified | MSME Registered | AICTE Approved
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/919492321556" target="_blank" class="floating-btn">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
